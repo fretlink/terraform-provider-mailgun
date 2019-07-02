@@ -107,29 +107,29 @@ func resourceMailgunDomain() *schema.Resource {
 			"open_tracking_settings_active": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
-				Computed: true,
+				Default:  false,
 			},
 
 			"click_tracking_settings_active": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
-				Computed: true,
+				Default:  false,
 			},
 
 			"unsubscribe_tracking_settings_active": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
-				Computed: true,
+				Default:  false,
 			},
 			"unsubscribe_tracking_settings_html_footer": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Default:  "\n<br>\n<p><a href=\"%unsubscribe_url%\">unsubscribe</a></p>\n",
 			},
 			"unsubscribe_tracking_settings_text_footer": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Default:  "\n\nTo unsubscribe click: <%unsubscribe_url%>\n\n",
 			},
 
 			"require_tls": &schema.Schema{
@@ -425,9 +425,12 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	d.Set("unsubscribe_tracking_settings_html_footer", domainTracking.Unsubscribe.HTMLFooter)
 	d.Set("unsubscribe_tracking_settings_text_footer", domainTracking.Unsubscribe.TextFooter)
 
+	time.Sleep(20 * time.Second)
+
 	ipAddress, err := mg.ListDomainIPS(ctx)
+
 	if err != nil {
-		return fmt.Errorf("Error Getting mailgun domain ips for %s: Error: %s", d.Id(), err)
+		return fmt.Errorf("Error Getting mailgun domain ips1 for %s: Error: %s", d.Id(), err)
 	}
 	ips := make([]string, len(ipAddress))
 	for i, r := range ipAddress {
