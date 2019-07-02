@@ -205,6 +205,14 @@ func resourceMailgunDomain() *schema.Resource {
 	}
 }
 
+func interfaceToStringTab(i interface{}) []string {
+	aInterface := i.([]interface{})
+	aString := make([]string, len(aInterface))
+	for i, v := range aInterface {
+		aString[i] = v.(string)
+	}
+	return aString
+}
 func CreateDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
@@ -218,7 +226,7 @@ func CreateDomain(d *schema.ResourceData, meta interface{}) error {
 		Wildcard:           d.Get("wildcard").(bool),
 		ForceDKIMAuthority: d.Get("force_dkim_authority").(bool),
 		DKIMKeySize:        d.Get("dkim_key_size").(int),
-		IPS:                d.Get("ips").([]string),
+		IPS:                interfaceToStringTab(d.Get("ips")),
 	})
 
 	if err != nil {
@@ -432,7 +440,7 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun credentials for %s: Error: %s", d.Id(), err)
 	}
-	
+
 	credentials := make([]map[string]interface{}, len(credentialsResponse))
 	for i, r := range credentialsResponse {
 		credentials[i] = make(map[string]interface{})
