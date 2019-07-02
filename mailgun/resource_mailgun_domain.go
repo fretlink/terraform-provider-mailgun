@@ -360,8 +360,8 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-
 	domainName := d.Get("name").(string)
+	mg = mailgun.NewMailgun(domainName, mg.APIKey())
 
 	domainResponse, err := mg.GetDomain(ctx, domainName)
 	if err != nil {
@@ -429,6 +429,10 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	d.Set("ips", ips)
 
 	credentialsResponse, err := ListCredentials(domainName, mg.APIKey())
+	if err != nil {
+		return fmt.Errorf("Error Getting mailgun credentials for %s: Error: %s", d.Id(), err)
+	}
+	
 	credentials := make([]map[string]interface{}, len(credentialsResponse))
 	for i, r := range credentialsResponse {
 		credentials[i] = make(map[string]interface{})
