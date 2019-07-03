@@ -425,7 +425,7 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	d.Set("unsubscribe_tracking_settings_html_footer", domainTracking.Unsubscribe.HTMLFooter)
 	d.Set("unsubscribe_tracking_settings_text_footer", domainTracking.Unsubscribe.TextFooter)
 
-	time.Sleep(20 * time.Second)
+	time.Sleep(25 * time.Second)
 
 	ipAddress, err := mg.ListDomainIPS(ctx)
 

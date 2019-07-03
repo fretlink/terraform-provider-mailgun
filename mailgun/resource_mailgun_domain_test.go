@@ -208,11 +208,21 @@ func interpolateTerraformTemplateDomain(template string) string {
 const testAccDomainConfig_basic = `
 resource "mailgun_domain" "exemple" {
 	name="%s"
+        wildcard=true
+        credentials{
+             login="aaaaaaa"
+             password="adfshfjqdskjhgfksdgfkqgfk"
+        }
 }
 `
 
 const testAccDomainConfig_update = `
 resource "mailgun_domain" "exemple" {
 	name="%s"
+        credentials{
+             login="aaaaaaa"
+             password="adfshfjqdskjhgfksdgfkqgfk"
+        }
+
 }
 `
