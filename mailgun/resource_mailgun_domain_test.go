@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+
 type fullDomain struct {
 	domainResponse   mailgun.DomainResponse
 	domainConnection mailgun.DomainConnection
@@ -226,3 +227,4 @@ resource "mailgun_domain" "exemple" {
 
 }
 `
+

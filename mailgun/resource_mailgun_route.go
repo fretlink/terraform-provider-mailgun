@@ -20,7 +20,7 @@ func resourceMailgunRoute() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"route_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -72,7 +72,6 @@ func CreateRoute(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(creationResponse.Id)
-
 	return ReadRoute(d, meta)
 }
 
@@ -94,7 +93,7 @@ func UpdateRoute(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error updating mailgun route: %s", err.Error())
 	}
 
-	return ReadDomain(d, meta)
+	return ReadRoute(d, meta)
 }
 
 func DeleteRoute(d *schema.ResourceData, meta interface{}) error {
@@ -125,7 +124,7 @@ func ReadRoute(d *schema.ResourceData, meta interface{}) error {
 	d.Set("expression", route.Expression)
 	d.Set("actions", route.Actions)
 	d.Set("created_at", route.CreatedAt)
-	d.Set("id", route.Id)
+	d.Set("route_id", route.Id)
 
 	d.SetId(route.Id)
 
