@@ -1,4 +1,4 @@
-Terraform Provider
+Terraform Provider Mailgun
 ==================
 
 - Website: https://www.terraform.io
