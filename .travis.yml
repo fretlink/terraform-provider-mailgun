@@ -22,5 +22,12 @@ matrix:
   fast_finish: true
   allow_failures:
   - go: tip
+
+cache:
+  directories:
+  - $GOPATH/src
+  - $HOME/.cache/go-build        
+  - $HOME/gopath/pkg/mod
+
 env:
   GO111MODULE=on
