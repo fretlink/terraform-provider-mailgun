@@ -19,7 +19,18 @@ script:
 - make vet
 - make website-test
 - make shellcheck
+- make website-githubpages
 
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN 
+  target_branch: gh-pages
+  keep_history: true
+  local_dir: terraform-provider-website
+  on:
+    all_branches: true
+    
 matrix:
   fast_finish: true
   allow_failures:
@@ -33,5 +44,3 @@ cache:
 env:
   matrix:
     - GO111MODULE=on
-  global:
-    - secure: rWjnWJgGEk2ncl6TXnpahUmriGSEaHGy+ZfmKKGpvrZxnlNY6sy63+qrnJNwaiV6uRG+kPfEChYD+dYfhjZRb3JWivo/ILCM9E0M9Ike6YAAsJKrcl0rUwFgqhBVXRdpBCSieYGiY8xNH/4Wu6i4bD9F1vSmpkvxYwae+7vGvyhEhyGMqWU92Svlus//K0Y27Qvlcw+Mx35nhdZsaeKN1Tb7uCHed9+vpCHud9NpSJLqxBjQl+1ibJ0Fqefyqbqy5dO0X3xE70eUMwM70ew+sgwzyq45VDBRPtVAN+8mtLOp2BVZE7SXFydfqnAm+1cbgzYBE5t+HlXwZzpRrtSwj+NRUt+7UtlrdfhMRmUVW76qWyMbF8CY6i06a73XWMYffKg3Ux2h0AHimvPJl8y+luMYmrl0RdgyLDcR0t9La0PNhOrKsauzkNX7KGPZwjTWv3+2RrsXDdT0Pi3JL15myyEuxiSAdDLIyiFB0sz9mCzYiu02SKKyURfo3bhMUrrBRbF47CpLTiCJrNBI36rk/cO4QJXyd9axEhy7vXiQObvaWZKbBqMTsL9EOZijJt5I1UxjwbCGM/GyYSrDK/+7d7PF0bvjo+8ps/o2WIW5B63IZiadzIt6nUOlEpFoOUsn0x4mufzIzMd+CSXdTxdXqRIXHxf5pKAUQZ8u7uRwERY=
