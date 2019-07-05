@@ -25,6 +25,9 @@ vet:
 		exit 1; \
 	fi
 
+shellcheck:
+	shellcheck scripts/*
+
 fmt:
 	gofmt -w $(GOFMT_FILES)
 

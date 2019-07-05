@@ -3,7 +3,7 @@
 # Check gofmt
 echo "==> Checking for unchecked errors..."
 
-if ! which errcheck > /dev/null; then
+if ! command -v errcheck > /dev/null; then
     echo "==> Installing errcheck..."
     go get -u github.com/kisielk/errcheck
 fi
@@ -12,7 +12,7 @@ err_files=$(errcheck -ignoretests \
                      -ignore 'github.com/hashicorp/terraform/helper/schema:Set' \
                      -ignore 'bytes:.*' \
                      -ignore 'io:Close|Write' \
-                     $(go list ./...| grep -v /vendor/))
+                     "$(go list ./...| grep -v /vendor/)")
 
 if [[ -n ${err_files} ]]; then
     echo 'Unchecked errors found in the following places:'

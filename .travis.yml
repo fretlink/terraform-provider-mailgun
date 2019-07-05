@@ -18,6 +18,7 @@ script:
 - make test
 - make vet
 - make website-test
+- make shellcheck
 
 matrix:
   fast_finish: true
@@ -26,7 +27,6 @@ matrix:
 
 cache:
   directories:
-  - $GOPATH/src
   - $HOME/.cache/go-build
   - $HOME/gopath/pkg/mod
 
