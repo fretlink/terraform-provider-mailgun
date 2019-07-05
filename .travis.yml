@@ -27,7 +27,6 @@ matrix:
 
 cache:
   directories:
-  - $GOPATH/src
   - $HOME/.cache/go-build
   - $HOME/gopath/pkg/mod
 
