@@ -18,6 +18,7 @@ script:
 - make test
 - make vet
 - make website-test
+- make shellcheck
 
 matrix:
   fast_finish: true
