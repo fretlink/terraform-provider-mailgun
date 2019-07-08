@@ -7,6 +7,10 @@ Terraform Provider Mailgun
 
 <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
+Website for the doc
+---------------------
+https://fretlink.github.io/terraform-provider-mailgun/docs/providers/mailgun/index.html
+
 Requirements
 ------------
 
