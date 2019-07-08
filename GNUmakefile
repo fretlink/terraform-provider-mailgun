@@ -48,6 +48,7 @@ test-compile:
 
 website-githubpages:
 	bash scripts/launch-website.sh
+
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
