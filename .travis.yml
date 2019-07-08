@@ -29,7 +29,7 @@ deploy:
   keep_history: true
   local_dir: terraform-provider-website
   on:
-    all_branches: true
+    branch: master
     
 matrix:
   fast_finish: true
