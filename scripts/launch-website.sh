@@ -5,6 +5,7 @@ wget --recursive --no-parent --domains localhost --page-requisites --html-extens
 
 rm -rf terraform-provider-website;
 mv localhost:4567/ terraform-provider-website;
+mv index.html terraform-provider-website/index.html
 
 docker stop "$(docker ps -q)") &
 
