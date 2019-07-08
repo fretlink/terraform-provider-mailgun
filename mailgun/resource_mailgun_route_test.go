@@ -57,6 +57,29 @@ func TestAccMailgunRoute_withUpdate(t *testing.T) {
 	})
 }
 
+func TestRoute_importBasic(t *testing.T) {
+	var route mailgun.Route
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccRouteCheckDestroy(&route),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRouteConfig_basic,
+				Check: resource.ComposeTestCheckFunc(
+					testAccRouteCheckExists("mailgun_route.exemple",&route),
+				),
+			},
+			{
+				ResourceName:      "mailgun_route.exemple",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccRouteCheckExists(rn string, route *mailgun.Route) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[rn]

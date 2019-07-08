@@ -368,12 +368,19 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-	domainName := d.Get("name").(string)
+	domainName := d.Id()
 	mg = mailgun.NewMailgun(domainName, mg.APIKey())
 
 	domainResponse, err := mg.GetDomain(ctx, domainName)
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun domain Details for %s: Error: %s", d.Id(), err)
+	}
+	if _, ok := d.GetOk("dkim_key_size"); !ok {
+		d.Set("dkim_key_size", 1024)
+	}
+
+	if _, ok := d.GetOk("force_dkim_authority"); !ok {
+		d.Set("force_dkim_authority", false)
 	}
 
 	d.Set("created_at", domainResponse.Domain.CreatedAt)
