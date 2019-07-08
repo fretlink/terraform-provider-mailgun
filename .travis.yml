@@ -24,7 +24,7 @@ script:
 deploy:
   provider: pages
   skip_cleanup: true
-  github_token: $GITHUB_TOKEN 
+  github_token: "$GITHUB_TOKEN"
   target_branch: gh-pages
   keep_history: true
   local_dir: terraform-provider-website
@@ -44,3 +44,5 @@ cache:
 env:
   matrix:
     - GO111MODULE=on
+  global:
+    secure: 2ophiVBTzEGwgWWeUBxeddU9QL+llyDNS1rT1fzKg4jwWOJumzd2bQL00UoYabpDTUUEASFJwJKxoBKCRKiOYHQl5RiH8f3K5ZftSnqR8MDT8NABL9pEPq6+M+kADs2hMMDGvV9qWNnwapcon7s09NiqLlZG88dRcW2kHeDlLBfSCZq9ghH/30XstYxD0zY2BGvFCBngKsnvMPZjGYUxTTX6IVuzgyv0BEN43dzY3gCY9tbsCUwAXaHxR1+/rE1Lq1I9H9RtsjUjrhqKAJ3DlaoIezUQqbmKoo3TkIC4YhF1Z0n+m5BmYaoGD5YHZJl8Susj0PGtQtbfRIUksIOhDPnNXzeycojwku7ErvahFT2rZ3SGkYuQpeN0+tqmPRTuZPHSxqw0XETUC3vu5AfpVIzAIa5hT2C9tBUHcNJYHeJb0teJ4mmY1J6rkh1l40bW2bE+tS9V9dvsVmfs6JthQBRo/zPDQqEUXHvb9FD6m1KbuxlZGDnnst0YFsrBDRu0bRJdXBLFnBo6oyAkrk2XzGzNas8NzCKuAIcxT/J7D9vyKiKTs+Fy3dRUohBiZqkZ5u8kQ0ncGqeIUnvMuc6GJBkNMaPhX2XjdQi9QUN2dCHimb1D5ox/7XwOYqc7nW3kbQxfRs/Us1ftrFvhpm/HKeD7QriUCkxwGdrrhfMTRdM=
