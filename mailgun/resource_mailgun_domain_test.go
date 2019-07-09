@@ -105,6 +105,30 @@ func TestAccMailgunDomain_withUpdate(t *testing.T) {
 	})
 }
 
+
+func TestDomain_importBasic(t *testing.T) {
+	var domain fullDomain
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccDomainCheckDestroy(&domain),
+		Steps: []resource.TestStep{
+			{
+				Config: interpolateTerraformTemplateDomain(testAccDomainConfig_import),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDomainCheckExists("mailgun_domain.exemple",&domain),
+				),
+			},
+			{
+				ResourceName:      "mailgun_domain.exemple",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccDomainCheckExists(rn string, domain *fullDomain) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[rn]
@@ -224,5 +248,10 @@ resource "mailgun_domain" "exemple" {
              password="adfshfjqdskjhgfksdgfkqgfk"
         }
 
+}
+`
+const testAccDomainConfig_import = `
+resource "mailgun_domain" "exemple" {
+	name = "%s"
 }
 `

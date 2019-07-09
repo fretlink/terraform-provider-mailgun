@@ -16,7 +16,7 @@ func resourceMailgunDomain() *schema.Resource {
 		Delete: DeleteDomain,
 		Read:   ReadDomain,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: ImportStatePassthroughDomain,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -368,7 +368,7 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-	domainName := d.Get("name").(string)
+	domainName := d.Id()
 	mg = mailgun.NewMailgun(domainName, mg.APIKey())
 
 	domainResponse, err := mg.GetDomain(ctx, domainName)
@@ -481,4 +481,15 @@ func ListCredentials(domain, apiKey string) ([]mailgun.Credential, error) {
 		return nil, it.Err()
 	}
 	return result, nil
+}
+
+func ImportStatePassthroughDomain(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	if _, ok := d.GetOk("dkim_key_size"); !ok {
+		d.Set("dkim_key_size", 1024)
+	}
+
+	if _, ok := d.GetOk("force_dkim_authority"); !ok {
+		d.Set("force_dkim_authority", false)
+	}
+	return []*schema.ResourceData{d}, nil
 }
