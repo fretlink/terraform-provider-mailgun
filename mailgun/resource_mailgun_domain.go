@@ -366,7 +366,7 @@ func DeleteDomain(d *schema.ResourceData, meta interface{}) error {
 
 func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
 	defer cancel()
 	domainName := d.Id()
 	mg = mailgun.NewMailgun(domainName, mg.APIKey())
@@ -425,9 +425,7 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	d.Set("unsubscribe_tracking_settings_html_footer", domainTracking.Unsubscribe.HTMLFooter)
 	d.Set("unsubscribe_tracking_settings_text_footer", domainTracking.Unsubscribe.TextFooter)
 
-	time.Sleep(25 * time.Second)
-
-	ipAddress, err := mg.ListDomainIPS(ctx)
+	ipAddress, err := getIps(ctx, mg)
 
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun domain ips1 for %s: Error: %s", d.Id(), err)
@@ -492,4 +490,16 @@ func ImportStatePassthroughDomain(d *schema.ResourceData, meta interface{}) ([]*
 		d.Set("force_dkim_authority", false)
 	}
 	return []*schema.ResourceData{d}, nil
+}
+
+func getIps(ctx context.Context,mg *mailgun.MailgunImpl) ([]mailgun.IPAddress, error){
+	start := time.Now()
+	t := time.Now()
+	ipAddress, err := mg.ListDomainIPS(ctx)
+	for (err != nil && t.Sub(start)< 120 * time.Second) {
+		ipAddress, err = mg.ListDomainIPS(ctx)
+		time.Sleep(5 * time.Second)
+		t = time.Now()
+	}
+	return ipAddress, err
 }
