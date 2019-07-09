@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"testing"
 	"time"
+	"log"
 )
 
 type fullDomain struct {
@@ -210,13 +211,20 @@ func testAccDomainCheckDestroy(domain *fullDomain) resource.TestCheckFunc {
 		mg := testAccProvider.Meta().(*mailgun.MailgunImpl)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 		defer cancel()
-		time.Sleep(5 * time.Second)
-		_, err := mg.GetDomain(ctx, domain.domainResponse.Domain.Name)
-		if err == nil {
-			return fmt.Errorf("domain still exists")
-		}
 
-		return nil
+		log.Printf("[DEBUG] try to fetch destroyed domain %s",mg.Domain())
+
+		return resource.Retry(1*time.Minute, func() *resource.RetryError {
+			_, err := mg.GetDomain(ctx, domain.domainResponse.Domain.Name)
+			if err == nil {
+				log.Printf("[DEBUG] managed to fetch destroyed domain %s",mg.Domain())
+				return resource.RetryableError(err)
+			}
+
+			log.Printf("[DEBUG] failed to fetch destroyed domain %s",mg.Domain())
+
+			return nil
+		})
 	}
 }
 

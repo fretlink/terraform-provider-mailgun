@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/mailgun/mailgun-go/v3"
 	"log"
 	"time"
@@ -493,13 +494,18 @@ func ImportStatePassthroughDomain(d *schema.ResourceData, meta interface{}) ([]*
 }
 
 func getIps(ctx context.Context,mg *mailgun.MailgunImpl) ([]mailgun.IPAddress, error){
-	start := time.Now()
-	t := time.Now()
-	ipAddress, err := mg.ListDomainIPS(ctx)
-	for (err != nil && t.Sub(start)< 120 * time.Second) {
+	var ipAddress []mailgun.IPAddress
+	log.Printf("[DEBUG] begin to fetch ips for %s",mg.Domain())
+	err := resource.Retry(2*time.Minute, func() *resource.RetryError {
+		var err error
 		ipAddress, err = mg.ListDomainIPS(ctx)
-		time.Sleep(5 * time.Second)
-		t = time.Now()
-	}
+		if err != nil {
+			log.Printf("[DEBUG] failed to fetch ips for %s",mg.Domain())
+			return resource.RetryableError(err)
+		}
+		log.Printf("[DEBUG] managed to fetch ips for %s",mg.Domain())
+
+		return nil
+	})
 	return ipAddress, err
 }
