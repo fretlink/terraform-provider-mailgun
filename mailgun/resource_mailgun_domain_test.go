@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"testing"
 	"time"
+	"log"
 )
 
 type fullDomain struct {
@@ -21,7 +22,7 @@ type fullDomain struct {
 }
 
 func getFullDomain(mg *mailgun.MailgunImpl, domainName string) (*fullDomain, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
 	defer cancel()
 	mg = mailgun.NewMailgun(domainName, mg.APIKey())
 
@@ -42,7 +43,8 @@ func getFullDomain(mg *mailgun.MailgunImpl, domainName string) (*fullDomain, err
 		return nil, fmt.Errorf("Error Getting mailgun domain tracking Details for %s: Error: %s", domainName, err)
 	}
 
-	ipAddress, err := mg.ListDomainIPS(ctx)
+	ipAddress, err := getIps(ctx, mg)
+
 	if err != nil {
 		return nil, fmt.Errorf("Error Getting mailgun domain ips2 for %s: Error: %s", domainName, err)
 	}
@@ -210,12 +212,19 @@ func testAccDomainCheckDestroy(domain *fullDomain) resource.TestCheckFunc {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 		defer cancel()
 
-		_, err := mg.GetDomain(ctx, domain.domainResponse.Domain.Name)
-		if err == nil {
-			return fmt.Errorf("domain still exists")
-		}
+		log.Printf("[DEBUG] try to fetch destroyed domain %s",mg.Domain())
 
-		return nil
+		return resource.Retry(1*time.Minute, func() *resource.RetryError {
+			_, err := mg.GetDomain(ctx, domain.domainResponse.Domain.Name)
+			if err == nil {
+				log.Printf("[DEBUG] managed to fetch destroyed domain %s",mg.Domain())
+				return resource.RetryableError(err)
+			}
+
+			log.Printf("[DEBUG] failed to fetch destroyed domain %s",mg.Domain())
+
+			return nil
+		})
 	}
 }
 

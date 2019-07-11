@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/mailgun/mailgun-go/v3"
 	"log"
 	"time"
@@ -366,7 +367,7 @@ func DeleteDomain(d *schema.ResourceData, meta interface{}) error {
 
 func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	mg := meta.(*mailgun.MailgunImpl)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
 	defer cancel()
 	domainName := d.Id()
 	mg = mailgun.NewMailgun(domainName, mg.APIKey())
@@ -425,9 +426,7 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	d.Set("unsubscribe_tracking_settings_html_footer", domainTracking.Unsubscribe.HTMLFooter)
 	d.Set("unsubscribe_tracking_settings_text_footer", domainTracking.Unsubscribe.TextFooter)
 
-	time.Sleep(25 * time.Second)
-
-	ipAddress, err := mg.ListDomainIPS(ctx)
+	ipAddress, err := getIps(ctx, mg)
 
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun domain ips1 for %s: Error: %s", d.Id(), err)
@@ -492,4 +491,21 @@ func ImportStatePassthroughDomain(d *schema.ResourceData, meta interface{}) ([]*
 		d.Set("force_dkim_authority", false)
 	}
 	return []*schema.ResourceData{d}, nil
+}
+
+func getIps(ctx context.Context,mg *mailgun.MailgunImpl) ([]mailgun.IPAddress, error){
+	var ipAddress []mailgun.IPAddress
+	log.Printf("[DEBUG] begin to fetch ips for %s",mg.Domain())
+	err := resource.Retry(2*time.Minute, func() *resource.RetryError {
+		var err error
+		ipAddress, err = mg.ListDomainIPS(ctx)
+		if err != nil {
+			log.Printf("[DEBUG] failed to fetch ips for %s",mg.Domain())
+			return resource.RetryableError(err)
+		}
+		log.Printf("[DEBUG] managed to fetch ips for %s",mg.Domain())
+
+		return nil
+	})
+	return ipAddress, err
 }
