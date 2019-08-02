@@ -376,11 +376,10 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun domain Details for %s: Error: %s", d.Id(), err)
 	}
-
 	d.Set("created_at", domainResponse.Domain.CreatedAt.String())
-	d.Set("smtd_login", domainResponse.Domain.SMTPLogin)
+	d.Set("smtp_login", domainResponse.Domain.SMTPLogin)
 	d.Set("name", domainResponse.Domain.Name)
-	d.Set("smtd_password", domainResponse.Domain.SMTPPassword)
+	d.Set("smtp_password", domainResponse.Domain.SMTPPassword)
 	d.Set("wildcard", domainResponse.Domain.Wildcard)
 	d.Set("spam_action", domainResponse.Domain.SpamAction)
 	d.Set("state", domainResponse.Domain.State)
