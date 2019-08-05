@@ -99,7 +99,7 @@ func resourceMailgunDomain() *schema.Resource {
 						},
 						"password": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 					},
 				},
@@ -314,7 +314,7 @@ func UpdateDomain(d *schema.ResourceData, meta interface{}) error {
 				newCredential := j.(map[string]interface{})
 				if oldCredential["login"] == newCredential["login"] {
 					found = true
-					if oldCredential["password"] != newCredential["password"] {
+					if oldCredential["password"] != newCredential["password"] && newCredential["password"] != "" {
 						err := mg.ChangeCredentialPassword(ctx, oldCredential["login"].(string), newCredential["password"].(string))
 						if err != nil {
 							return fmt.Errorf("Error updating mailgun credential password: %s", err.Error())
@@ -376,11 +376,10 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Error Getting mailgun domain Details for %s: Error: %s", d.Id(), err)
 	}
-
-	d.Set("created_at", domainResponse.Domain.CreatedAt)
-	d.Set("smtd_login", domainResponse.Domain.SMTPLogin)
+	d.Set("created_at", domainResponse.Domain.CreatedAt.String())
+	d.Set("smtp_login", domainResponse.Domain.SMTPLogin)
 	d.Set("name", domainResponse.Domain.Name)
-	d.Set("smtd_password", domainResponse.Domain.SMTPPassword)
+	d.Set("smtp_password", domainResponse.Domain.SMTPPassword)
 	d.Set("wildcard", domainResponse.Domain.Wildcard)
 	d.Set("spam_action", domainResponse.Domain.SpamAction)
 	d.Set("state", domainResponse.Domain.State)
@@ -444,12 +443,19 @@ func ReadDomain(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	credentials := make([]map[string]interface{}, len(credentialsResponse))
+	credentialsConf := d.Get("credentials").([]interface{})
 	for i, r := range credentialsResponse {
 		credentials[i] = make(map[string]interface{})
-		credentials[i]["created_at"] = r.CreatedAt
+		credentials[i]["created_at"] = r.CreatedAt.String()
 		credentials[i]["login"] = r.Login
-		credentials[i]["password"] = r.Password
+		for _, c:= range credentialsConf {
+			conf:=c.(map[string]interface{})
+			if conf["login"] == credentials[i]["login"] {
+				credentials[i]["password"] = conf["password"]
+			}
+		}
 	}
+
 	d.Set("credentials", credentials)
 
 	d.SetId(domainName)

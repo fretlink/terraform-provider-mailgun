@@ -123,7 +123,7 @@ func ReadRoute(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", route.Description)
 	d.Set("expression", route.Expression)
 	d.Set("actions", route.Actions)
-	d.Set("created_at", route.CreatedAt)
+	d.Set("created_at", route.CreatedAt.String())
 	d.Set("route_id", route.Id)
 
 	d.SetId(route.Id)
