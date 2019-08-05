@@ -8971,8 +8971,8 @@ svg.logo, svg.logo.color, #page-home #header .navbar-brand a svg.logo {
         #docs-sidebar ul.nav.docs-sidenav li.has-subnav.active:before {
           transform: rotate(90deg);
           top: 2px; }
-      /* line 152, /terraform-website/source/assets/stylesheets/_docs.scss */
-      #docs-sidebar ul.nav.docs-sidenav li.active > a {
+      /* line 151, /terraform-website/source/assets/stylesheets/_docs.scss */
+      #docs-sidebar ul.nav.docs-sidenav li.current > a {
         color: #5C4EE5; }
       /* line 156, /terraform-website/source/assets/stylesheets/_docs.scss */
       #docs-sidebar ul.nav.docs-sidenav li.active > ul.nav {

@@ -9366,6 +9366,17 @@ document.addEventListener('turbolinks:load', function() {
       product: 'terraform'
     }
   })
+
+  track('a.notification', function(el) {
+    var params = {
+      name: 'Alert Banner',
+      variant: el.innerText.replace(/\s+/g, ' ').trim()
+    }
+    // Create a stringified `label` prop of the event for GA tracking purposes
+    params.label = JSON.stringify(params)
+    params.event = 'CTA Clicked'
+    return params
+  })
 })
 ;
 
@@ -9395,8 +9406,12 @@ document.addEventListener("turbolinks:load", function() {
         // we leave the nav-hidden class alone after this.
     function resetActiveSubnavs() {
         subNavs.removeClass("active");
-        // Activate current page, locked-open navs, and all their parents:
+        // Activate current page, locked-open navs, and all their ancestors:
         docsSidebar.find("li").has(".current-page, .nav-visible").addClass("active");
+        // Activate auto-expand navs, but leave their ancestors alone:
+        docsSidebar.find(".nav-auto-expand").parent("li").addClass("active");
+        // Colored links for current page and its ancestors
+        docsSidebar.find("li").has(".current-page").addClass("current");
     }
     resetActiveSubnavs();
 
