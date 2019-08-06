@@ -15,6 +15,8 @@ install:
 - bash scripts/gogetcookie.sh
 
 script:
+- make build
+- mv "$GOPATH/bin/terraform-provider-mailgun" "terraform-provider-mailgun-$TRAVIS_TAG-linux_amd64"
 - make test
 - make vet
 - make website-test
@@ -30,7 +32,7 @@ deploy:
   local_dir: terraform-provider-website
   on:
     branch: master
-    
+
 matrix:
   fast_finish: true
   allow_failures:
