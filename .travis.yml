@@ -24,14 +24,20 @@ script:
 - make website-githubpages
 
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: "$GITHUB_TOKEN"
-  target_branch: gh-pages
-  keep_history: true
-  local_dir: terraform-provider-website
-  on:
-    branch: master
+  - provider: pages
+    skip_cleanup: true
+    github_token: "$GITHUB_TOKEN"
+    target_branch: gh-pages
+    keep_history: true
+    local_dir: terraform-provider-website
+    on:
+      branch: master
+  - provider: releases
+    api_key: "$GITHUB_TOKEN"
+    file: "terraform-provider-mailgun-$TRAVIS_TAG-linux_amd64"
+    skip_cleanup: true
+    on:
+      tags: true
 
 matrix:
   fast_finish: true
